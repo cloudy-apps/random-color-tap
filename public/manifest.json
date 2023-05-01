@@ -1,0 +1,16 @@
+{
+  "name": "",
+  "short_name": "",
+  "description": "A real-time chat application built with web technologies and AI",
+  "icons": [
+    {
+      "src": "icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#312E81",
+  "background_color": "#ffffff"
+}
