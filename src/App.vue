@@ -5,7 +5,8 @@
 <script>
 import { defineComponent, ref } from 'vue';
 
-const colors = `rgb(244, 67, 54)
+const colors = `
+rgb(244, 67, 54)
 rgb(233, 30, 99)
 rgb(156, 39, 176)
 rgb(103, 58, 183)
@@ -23,7 +24,8 @@ rgb(255, 152, 0)
 rgb(255, 87, 34)
 rgb(121, 85, 72)
 rgb(158, 158, 158)
-rgb(96, 125, 139)`.trim().split('\n');
+rgb(96, 125, 139)
+`.trim().split('\n');
 
 export default defineComponent({
   setup() {
@@ -37,3 +39,8 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+main {
+  transition: background-color 0.5 ease;
+}
+</style>
