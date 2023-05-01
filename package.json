@@ -1,0 +1,30 @@
+{
+    "name": "random-color-tap",
+    "private": true,
+    "version": "0.0.0",
+    "main": "./index.js",
+    "scripts": {
+      "ci": "npm i && npm run check && npm run build",
+      "dev": "vite --host 0.0.0.0",
+      "check": "vue-tsc",
+      "build": "vite build",
+      "preview": "vite preview"
+    },
+    "prettier": "@cloud-cli/prettier-config",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/cloudy-apps/random-color-tap.git"
+    },
+    "publishConfig": {
+      "access": "public"
+    },
+    "devDependencies": {
+      "@cloud-cli/jest-config": "^1.0.0",
+      "@cloud-cli/prettier-config": "^1.0.0",
+      "@vitejs/plugin-vue": "^4.1.0",
+      "typescript": "^5.0.2",
+      "vite": "^4.2.1",
+      "vue-tsc": "^1.2.0",
+      "vue": "^3.2.47"
+    }
+  }
