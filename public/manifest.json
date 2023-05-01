@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "Random Color Tap",
+  "short_name": "Random Color Tap",
   "description": "A real-time chat application built with web technologies and AI",
   "icons": [
     {
@@ -11,6 +11,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#312E81",
+  "theme_color": "#FF9800",
   "background_color": "#ffffff"
 }
