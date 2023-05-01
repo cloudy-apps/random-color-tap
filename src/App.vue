@@ -1,9 +1,9 @@
 <template>
-  <main class="w-screen h-screen z-2 absolute" @click="onTap()" :style.backgroundColor="color"></main>
+  <main class="w-screen h-screen z-2 absolute" @click="onTap()" :style="colorStyle"></main>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, unref, computed } from 'vue';
 
 const colors = `
 rgb(244, 67, 54)
@@ -30,12 +30,15 @@ rgb(96, 125, 139)
 export default defineComponent({
   setup() {
     const color = ref('');
+
     function onTap() {
       const index = Math.floor(Math.random() * 1000) % colors.length;
       color.value = colors[index];
     }
 
-    return { color, onTap };
+    const colorStyle = computed(() => ({ backgroundColor: unref(color) }));
+
+    return { color, colorStyle, onTap };
   },
 });
 </script>
