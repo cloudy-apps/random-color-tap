@@ -5,16 +5,13 @@
 <script>
 import { defineComponent, ref, unref, computed } from 'vue';
 
-const colors = `
-`.trim().split('\n');
-
 export default defineComponent({
   setup() {
     const color = ref('');
 
     function onTap() {
       const index = 1 + Math.floor(Math.random() * 1000) % 18;
-      color.value = colors[index];
+      color.value = `color-${index}`;
       console.log(unref(color));
     }
 
