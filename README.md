@@ -1,2 +1,3 @@
 # random-color-tap
-Choose a random color on tap
+
+See a random color on tap/click
