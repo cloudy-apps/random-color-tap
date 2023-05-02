@@ -21,7 +21,7 @@ export default defineComponent({
 </script>
 <style>
 main {
-  transition: background-color 1 ease;
+  transition: background-color 0.5s ease;
 }
 
 .color-1 { background-color: rgb(244, 67, 54); }
