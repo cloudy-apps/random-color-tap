@@ -1,5 +1,5 @@
 <template>
-  <main class="w-screen h-screen z-2 absolute" @click="onTap()" :class="color"></main>
+  <main class="w-screen h-screen z-2 absolute" @click="onTap()" @tap="onTap()" @touchend="onTap()" :class="color"></main>
 </template>
 
 <script>
