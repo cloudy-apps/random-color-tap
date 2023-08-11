@@ -37,8 +37,13 @@ export default async function (req, res, next) {
     const color = { h, s, v };
 
     try {
-      const { clientId, clientSecret } = req.headers;
-      res.end(await changeColor(deviceId, color, { clientId, clientSecret }));
+      const { clientid, clientsecret } = req.headers;
+      const credentials = {
+        clientId: clientid,
+        clientSecret: clientsecret,
+      };
+
+      res.end(await changeColor(deviceId, color, credentials));
     } catch (error) {
       console.log(error);
       res.writeHead(500).end();

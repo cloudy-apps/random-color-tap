@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#FF9800" />
-    <title>Tap Tap</title>
+    <title>Tap Tap Tap</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
@@ -15,70 +15,89 @@
   <body>
     <main id="app" class="w-screen h-screen"></main>
   </body>
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const colors = [
-        "#F44336",
-        "#E91E63",
-        "#9C27B0",
-        "#673AB7",
-        "#3F51B5",
-        "#2196F3",
-        "#03A9F4",
-        "#00BCD4",
-        "#009688",
-        "#4CAF50",
-        "#8BC34A",
-        "#CDDC39",
-        "#FFEB3B",
-        "#FFC107",
-        "#FF9800",
-        "#FF5722",
-        "#795548",
-        "#9E9E9E",
-        "#607D8B",
-      ];
+  <script type="module">
+    import auth from "https://auth.homebots.io/auth.js";
 
-      const hsvColors = [
-        { h: 4, s: 89, v: 96 }, // #F44336
-        { h: 340, s: 82, v: 92 }, // #E91E63
-        { h: 288, s: 64, v: 69 }, // #9C27B0
-        { h: 262, s: 52, v: 72 }, // #673AB7
-        { h: 232, s: 57, v: 71 }, // #3F51B5
-        { h: 207, s: 87, v: 95 }, // #2196F3
-        { h: 199, s: 98, v: 96 }, // #03A9F4
-        { h: 187, s: 100, v: 83 }, // #00BCD4
-        { h: 174, s: 100, v: 60 }, // #009688
-        { h: 122, s: 39, v: 80 }, // #4CAF50
-        { h: 76, s: 76, v: 70 }, // #8BC34A
-        { h: 66, s: 79, v: 80 }, // #CDDC39
-        { h: 54, s: 100, v: 100 }, // #FFEB3B
-        { h: 45, s: 100, v: 100 }, // #FFC107
-        { h: 36, s: 100, v: 100 }, // #FF9800
-        { h: 14, s: 100, v: 100 }, // #FF5722
-        { h: 16, s: 32, v: 60 }, // #795548
-        { h: 0, s: 0, v: 62 }, // #9E9E9E
-        { h: 200, s: 24, v: 55 }, // #607D8B
-      ];
+    const colors = [
+      "#F44336",
+      "#E91E63",
+      "#9C27B0",
+      "#673AB7",
+      "#3F51B5",
+      "#2196F3",
+      "#03A9F4",
+      "#00BCD4",
+      "#009688",
+      "#4CAF50",
+      "#8BC34A",
+      "#CDDC39",
+      "#FFEB3B",
+      "#FFC107",
+      "#FF9800",
+      "#FF5722",
+      "#795548",
+      "#9E9E9E",
+      "#607D8B",
+    ];
 
+    const hsvColors = [
+      { h: 4, s: 89, v: 96 }, // #F44336
+      { h: 340, s: 82, v: 92 }, // #E91E63
+      { h: 288, s: 64, v: 69 }, // #9C27B0
+      { h: 262, s: 52, v: 72 }, // #673AB7
+      { h: 232, s: 57, v: 71 }, // #3F51B5
+      { h: 207, s: 87, v: 95 }, // #2196F3
+      { h: 199, s: 98, v: 96 }, // #03A9F4
+      { h: 187, s: 100, v: 83 }, // #00BCD4
+      { h: 174, s: 100, v: 60 }, // #009688
+      { h: 122, s: 39, v: 80 }, // #4CAF50
+      { h: 76, s: 76, v: 70 }, // #8BC34A
+      { h: 66, s: 79, v: 80 }, // #CDDC39
+      { h: 54, s: 100, v: 100 }, // #FFEB3B
+      { h: 45, s: 100, v: 100 }, // #FFC107
+      { h: 36, s: 100, v: 100 }, // #FF9800
+      { h: 14, s: 100, v: 100 }, // #FF5722
+      { h: 16, s: 32, v: 60 }, // #795548
+      { h: 0, s: 0, v: 62 }, // #9E9E9E
+      { h: 200, s: 24, v: 55 }, // #607D8B
+    ];
+
+    let properties;
+
+    async function getProperties() {
+      if (!properties) {
+        const clientId = await auth.getProperty("rct:clientId");
+        const clientSecret = await auth.getProperty("rct:clientSecret");
+        const deviceId = await auth.getProperty("rct:deviceId");
+
+        properties = {
+          clientId: clientId.value,
+          clientSecret: clientSecret.value,
+          deviceId: deviceId.value,
+        };
+      }
+
+      return properties;
+    }
+
+    async function changeColor() {
+      const index = 1 + (Math.floor(Math.random() * 1000) % colors.length) - 1;
+      const color = colors[index];
+      const hsvColor = hsvColors[index];
+      const colorString = [hsvColor.h, hsvColor.s, hsvColor.v].join(",");
+
+      main.style.backgroundColor = color;
+      theme.content = color;
+
+      const { clientId, clientSecret, deviceId } = await getProperties();
+      fetch("/tap/" + deviceId + "/" + colorString, {
+        headers: { clientId, clientSecret },
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
       const main = document.querySelector("main");
       const theme = document.head.querySelector('meta[name="theme-color"]');
-
-      function changeColor() {
-        const index =
-          1 + (Math.floor(Math.random() * 1000) % colors.length) - 1;
-        const color = colors[index];
-        const hsvColor = hsvColors[index];
-        const colorString = [hsvColor.h, hsvColor.s, hsvColor.v].join(",");
-
-        main.style.backgroundColor = color;
-        theme.content = color;
-
-        const { clientId, clientSecret, deviceId } = localStorage;
-        fetch("/tap/" + deviceId + "/" + colorString, {
-          headers: { clientId, clientSecret },
-        });
-      }
 
       main.onclick = changeColor;
       main.ontouchend = changeColor;
