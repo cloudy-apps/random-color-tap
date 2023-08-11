@@ -27,6 +27,10 @@ async function changeColor(deviceId, color, credentials) {
   console.log(url, payload);
   const response = await fetch(url, payload);
 
+  if (response.ok) {
+    console.log(await response.text());
+  }
+
   return response.ok;
 }
 
@@ -43,7 +47,7 @@ export default async function (req, res, next) {
         clientSecret: clientsecret,
       };
 
-      res.end(await changeColor(deviceId, color, credentials));
+      res.end(String(await changeColor(deviceId, color, credentials)));
     } catch (error) {
       console.log(error);
       res.writeHead(500).end();
