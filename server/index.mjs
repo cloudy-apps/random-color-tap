@@ -1,7 +1,5 @@
 async function changeColor(deviceId, color, credentials) {
   const path = `/v1.0/devices/${deviceId}/commands`;
-  // const hue = Math.floor(Math.random() * 1000) % 360;
-  // : { h: hue, s: 1000, v: 1000 };
   const value = { h: color.h, s: color.s * 10, v: color.v * 10 };
   const lampPayload = {
     commands: [
@@ -20,7 +18,7 @@ async function changeColor(deviceId, color, credentials) {
   const url = new URL(
     {
       pathname: "/request",
-      searchParams,
+      search: searchParams.toString(),
     },
     "https://tuya-connector.jsfn.run"
   );
