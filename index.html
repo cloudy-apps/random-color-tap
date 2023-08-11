@@ -16,7 +16,7 @@
     <main id="app" class="w-screen h-screen"></main>
   </body>
   <script type="module">
-    import auth from "https://auth.homebots.io/auth.js";
+    import { getProperty } from "https://auth.homebots.io/auth.js";
 
     const colors = [
       "#F44336",
@@ -66,9 +66,9 @@
 
     async function getProperties() {
       if (!properties) {
-        const clientId = await auth.getProperty("rct:clientId");
-        const clientSecret = await auth.getProperty("rct:clientSecret");
-        const deviceId = await auth.getProperty("rct:deviceId");
+        const clientId = await getProperty("rct:clientId");
+        const clientSecret = await getProperty("rct:clientSecret");
+        const deviceId = await getProperty("rct:deviceId");
 
         properties = {
           clientId: clientId.value,
