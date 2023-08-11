@@ -16,7 +16,11 @@
     <main id="app" class="w-screen h-screen"></main>
   </body>
   <script type="module">
-    import { getProperty } from "https://auth.homebots.io/auth.js";
+    import {
+      getProperty,
+      getProfile,
+      signIn,
+    } from "https://auth.homebots.io/auth.js";
 
     const colors = [
       "#F44336",
@@ -85,6 +89,8 @@
       const color = colors[index];
       const hsvColor = hsvColors[index];
       const colorString = [hsvColor.h, hsvColor.s, hsvColor.v].join(",");
+      const main = document.querySelector("main");
+      const theme = document.head.querySelector('meta[name="theme-color"]');
 
       main.style.backgroundColor = color;
       theme.content = color;
@@ -96,13 +102,16 @@
     }
 
     window.addEventListener("DOMContentLoaded", async () => {
-      const main = document.querySelector("main");
-      const theme = document.head.querySelector('meta[name="theme-color"]');
-
       main.onclick = changeColor;
       main.ontouchend = changeColor;
 
       changeColor();
+
+      try {
+        await getProfile();
+      } catch {
+        signIn();
+      }
     });
   </script>
   <style>
