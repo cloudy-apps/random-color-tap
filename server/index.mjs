@@ -15,13 +15,8 @@ async function changeColor(deviceId, color, credentials) {
     path: encodeURIComponent(path),
   }).forEach(([key, value]) => searchParams.set(key, value));
 
-  const url = new URL(
-    {
-      pathname: "/request",
-      search: searchParams.toString(),
-    },
-    "https://tuya-connector.jsfn.run"
-  );
+  const url =
+    "https://tuya-connector.jsfn.run/request?" + searchParams.toString();
 
   const payload = {
     mode: "cors",
@@ -37,7 +32,7 @@ async function changeColor(deviceId, color, credentials) {
 
 export default async function (req, res, next) {
   if (req.url.startsWith("/tap/")) {
-    const [deviceId, colorString] = req.url.replace("/tap/", "").split('/');
+    const [deviceId, colorString] = req.url.replace("/tap/", "").split("/");
     const [h, s, v] = colorString.split(",");
     const color = { h, s, v };
 
