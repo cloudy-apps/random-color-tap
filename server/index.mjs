@@ -12,7 +12,7 @@ async function changeColor(deviceId, color, credentials) {
   Object.entries({
     ...credentials,
     method: "POST",
-    path: encodeURIComponent(path),
+    path: path,
   }).forEach(([key, value]) => searchParams.set(key, value));
 
   const url =
