@@ -1,6 +1,6 @@
 async function changeColor(deviceId, color, credentials) {
   const path = `/v1.0/devices/${deviceId}/commands`;
-  const value = { h: color.h, s: color.s * 10, v: color.v * 10 };
+  const value = { h: Number(color.h), s: Number(color.s * 10), v: Number(color.v * 10) };
   const lampPayload = {
     commands: [
       { code: "switch_led", value: true },
