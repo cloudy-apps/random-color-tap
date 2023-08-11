@@ -11,5 +11,4 @@ jobs:
     with:
       name: cloudy-apps/random-color-tap
       baseImage: cloud-cli/node:latest
-      defaultBranch: main
-      type: node
+      type: vite

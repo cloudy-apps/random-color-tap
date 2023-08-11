@@ -35,7 +35,7 @@
         '#9E9E9E',
         '#607D8B',
       ];
-      
+
       const main = document.querySelector('main');
       const theme = document.head.querySelector('meta[name="theme-color"]');
 
@@ -44,8 +44,10 @@
         const color = colors[index];
         main.style.backgroundColor = color;
         theme.content = color;
+
+        fetch('/tap/' + localStorage.deviceId);
       }
-      
+
       main.onclick = changeColor;
       main.ontouchend = changeColor;
 
