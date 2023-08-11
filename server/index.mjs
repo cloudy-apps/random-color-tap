@@ -26,8 +26,7 @@ export default async function (req, res, next) {
   if (req.url.startsWith("/tap/")) {
     const deviceId = req.url.replace("/tap/", "");
     try {
-      await changeColor(deviceId);
-      res.end("");
+      res.end(await changeColor(deviceId));
     } catch (error) {
       console.log(error);
       res.writeHead(500).end();
