@@ -37,7 +37,7 @@ async function changeColor(deviceId, color, credentials) {
 
 export default async function (req, res, next) {
   if (req.url.startsWith("/tap/")) {
-    const [deviceId, colorString] = req.url.replace("/tap/", "");
+    const [deviceId, colorString] = req.url.replace("/tap/", "").split('/');
     const [h, s, v] = colorString.split(",");
     const color = { h, s, v };
 
