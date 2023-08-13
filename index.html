@@ -97,14 +97,12 @@
         theme.content = color;
 
         const { clientId, clientSecret, deviceIds } = await getProperties();
-        const deviceId =
-          deviceIds[
-            1 + (Math.floor(Math.random() * 1000) % deviceIds.length) - 1
-          ];
 
-        fetch("/tap/" + deviceId + "/" + colorString, {
-          headers: { clientId, clientSecret },
-        });
+        deviceIds.forEach((deviceId) =>
+          fetch("/tap/" + deviceId + "/" + colorString, {
+            headers: { clientId, clientSecret },
+          })
+        );
       }
 
       main.onclick = changeColor;
