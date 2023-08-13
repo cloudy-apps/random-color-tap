@@ -41,7 +41,6 @@
       "#FF5722",
       "#795548",
       "#9E9E9E",
-      "#607D8B",
     ];
 
     const hsvColors = [
@@ -63,7 +62,6 @@
       { h: 14, s: 100, v: 100 }, // #FF5722
       { h: 16, s: 32, v: 60 }, // #795548
       { h: 0, s: 0, v: 62 }, // #9E9E9E
-      { h: 200, s: 24, v: 55 }, // #607D8B
     ];
 
     let properties;
@@ -72,12 +70,12 @@
       if (!properties) {
         const clientId = await getProperty("rct:clientId");
         const clientSecret = await getProperty("rct:clientSecret");
-        const deviceId = await getProperty("rct:deviceId");
+        const deviceIds = await getProperty("rct:deviceIds");
 
         properties = {
           clientId: clientId.value,
           clientSecret: clientSecret.value,
-          deviceId: deviceId.value,
+          deviceIds: deviceIds.value.split(",").map((s) => s.trim()),
         };
       }
 
@@ -98,7 +96,12 @@
         main.style.backgroundColor = color;
         theme.content = color;
 
-        const { clientId, clientSecret, deviceId } = await getProperties();
+        const { clientId, clientSecret, deviceIds } = await getProperties();
+        const deviceId =
+          deviceIds[
+            1 + (Math.floor(Math.random() * 1000) % deviceIds.length) - 1
+          ];
+
         fetch("/tap/" + deviceId + "/" + colorString, {
           headers: { clientId, clientSecret },
         });
