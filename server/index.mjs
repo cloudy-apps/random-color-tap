@@ -8,12 +8,10 @@ async function changeColor(deviceId, color, credentials) {
     v: Number(color.v * 10),
   };
 
-  const commands = {
-    commands: [
-      { code: "switch_led", value: true },
-      { code: "colour_data_v2", value },
-    ],
-  };
+  const commands = [
+    { code: "switch_led", value: true },
+    { code: "colour_data_v2", value },
+  ];
 
   const url = `https://tuya-connector.jsfn.run/commands?deviceId=${deviceId}&clientId=${clientId}&clientSecret=${clientSecret}`;
   const payload = { ...cors, body: JSON.stringify(commands) };
