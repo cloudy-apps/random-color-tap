@@ -16,7 +16,7 @@ async function changeColor(deviceId, color, credentials) {
   };
 
   const url = `https://tuya-connector.jsfn.run/commands?deviceId=${deviceId}&clientId=${clientId}&clientSecret=${clientSecret}`;
-  const payload = { ...cors, body: JSON.stringify(value) };
+  const payload = { ...cors, body: JSON.stringify(commands) };
 
   console.log(url, payload);
   const response = await fetch(url, payload);
