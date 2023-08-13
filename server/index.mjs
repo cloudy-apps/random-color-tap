@@ -1,35 +1,25 @@
+const cors = { mode: "cors", method: "POST" };
+
 async function changeColor(deviceId, color, credentials) {
-  const path = `/v1.0/devices/${deviceId}/commands`;
-  const value = { h: Number(color.h), s: Number(color.s * 10), v: Number(color.v * 10) };
-  const lampPayload = {
+  const { clientId, clientSecret } = credentials;
+  const value = {
+    h: Number(color.h),
+    s: Number(color.s * 10),
+    v: Number(color.v * 10),
+  };
+
+  const commands = {
     commands: [
       { code: "switch_led", value: true },
-      { code: "colour_data_v2", value: value },
+      { code: "colour_data_v2", value },
     ],
   };
 
-  const searchParams = new URLSearchParams();
-  Object.entries({
-    ...credentials,
-    method: "POST",
-    path: path,
-  }).forEach(([key, value]) => searchParams.set(key, value));
-
-  const url =
-    "https://tuya-connector.jsfn.run/request?" + searchParams.toString();
-
-  const payload = {
-    mode: "cors",
-    method: "POST",
-    body: JSON.stringify(lampPayload),
-  };
+  const url = `https://tuya-connector.jsfn.run/commands?deviceId=${deviceId}&clientId=${clientId}&clientSecret=${clientSecret}`;
+  const payload = { ...cors, body: JSON.stringify(value) };
 
   console.log(url, payload);
   const response = await fetch(url, payload);
-
-  if (response.ok) {
-    console.log(await response.text());
-  }
 
   return response.ok;
 }
