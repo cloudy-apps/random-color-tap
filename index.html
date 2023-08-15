@@ -90,14 +90,19 @@
       };
     }
 
+    function delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
     const applyColors = debounce(async (colorString) => {
       const { clientId, clientSecret, deviceIds } = await getProperties();
 
-      deviceIds.forEach((deviceId) =>
-        fetch("/tap/" + deviceId + "/" + colorString, {
+      for (const deviceId of deviceIds) {
+        await fetch("/tap/" + deviceId + "/" + colorString, {
           headers: { clientId, clientSecret },
-        })
-      );
+        });
+        await delay(200);
+      }
     });
 
     window.addEventListener("DOMContentLoaded", async () => {
