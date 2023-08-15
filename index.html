@@ -82,6 +82,14 @@
       return properties;
     }
 
+    function debounce(fn, time = 3000) {
+      let timer;
+      return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), time);
+      };
+    }
+
     window.addEventListener("DOMContentLoaded", async () => {
       const main = document.querySelector("main");
       const theme = document.head.querySelector('meta[name="theme-color"]');
@@ -105,10 +113,8 @@
         );
       }
 
-      main.onclick = changeColor;
-      main.ontouchend = changeColor;
-
-      changeColor();
+      main.onclick = debounce(changeColor);
+      main.ontouchend = debounce(changeColor);
 
       try {
         await getProfile();
