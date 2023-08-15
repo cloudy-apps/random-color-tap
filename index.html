@@ -82,7 +82,7 @@
       return properties;
     }
 
-    function debounce(fn, time = 3000) {
+    function debounce(fn, time = 1000) {
       let timer;
       return function (...args) {
         clearTimeout(timer);
@@ -90,11 +90,21 @@
       };
     }
 
+    const applyColors = debounce(async (colorString) => {
+      const { clientId, clientSecret, deviceIds } = await getProperties();
+
+      deviceIds.forEach((deviceId) =>
+        fetch("/tap/" + deviceId + "/" + colorString, {
+          headers: { clientId, clientSecret },
+        })
+      );
+    });
+
     window.addEventListener("DOMContentLoaded", async () => {
       const main = document.querySelector("main");
       const theme = document.head.querySelector('meta[name="theme-color"]');
 
-      async function changeColor() {
+      const changeColor = debounce(async function () {
         const index =
           1 + (Math.floor(Math.random() * 1000) % colors.length) - 1;
         const color = colors[index];
@@ -104,17 +114,11 @@
         main.style.backgroundColor = color;
         theme.content = color;
 
-        const { clientId, clientSecret, deviceIds } = await getProperties();
+        applyColors(colorString);
+      }, 200);
 
-        deviceIds.forEach((deviceId) =>
-          fetch("/tap/" + deviceId + "/" + colorString, {
-            headers: { clientId, clientSecret },
-          })
-        );
-      }
-
-      main.onclick = debounce(changeColor);
-      main.ontouchend = debounce(changeColor);
+      main.onclick = changeColor;
+      main.ontouchend = changeColor;
 
       try {
         await getProfile();
