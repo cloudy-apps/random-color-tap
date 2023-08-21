@@ -43,7 +43,7 @@
           clientId: clientId.value,
           clientSecret: clientSecret.value,
           deviceIds: deviceIds.value.split(",").map((s) => s.trim()),
-          deviceIds: Number(interval.value) || 1000,
+          interval: Number(interval.value) || 1000,
         };
       }
 
