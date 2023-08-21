@@ -26,7 +26,7 @@
       { rgb: "#ff0000", angle: 0, name: "red" },
       { rgb: "#ffff00", angle: 60, name: "yellow" },
       { rgb: "#00ff00", angle: 120, name: "green" },
-      { rgb: "#00ffff", angle: 180, name: "cyan" },
+      { rgb: "#00ffff", angle: 180, name: "light blue" },
       { rgb: "#0000ff", angle: 240, name: "blue" },
     ];
 
@@ -38,12 +38,14 @@
         const clientSecret = await getProperty("rct:clientSecret");
         const deviceIds = await getProperty("rct:deviceIds");
         const interval = await getProperty("rct:interval");
+        const resetTimeout = await getProperty("rct:resetTimeout");
 
         properties = {
           clientId: clientId.value,
           clientSecret: clientSecret.value,
           deviceIds: deviceIds.value.split(",").map((s) => s.trim()),
           interval: Number(interval.value) || 1000,
+          resetTimeout: Number(resetTimeout.value) || 3000,
         };
       }
 
@@ -68,9 +70,8 @@
       }
     }
 
-    const applyColors = async (colorString, name) => {
+    const applyColor = async (colorString) => {
       const { clientId, clientSecret, deviceIds } = await getProperties();
-      speak(name);
 
       for (const deviceId of deviceIds) {
         await fetch("/tap/" + deviceId + "/" + colorString, {
@@ -78,6 +79,16 @@
         });
 
         await delay(200);
+      }
+    };
+
+    const reset = async () => {
+      const { clientId, clientSecret, deviceIds } = await getProperties();
+
+      for (const deviceId of deviceIds) {
+        await fetch("/reset/" + deviceIds, {
+          headers: { clientId, clientSecret },
+        });
       }
     };
 
@@ -92,9 +103,10 @@
       }
 
       const props = await getProperties();
-      const apply = debounce(applyColors, props.interval);
+      const apply = debounce(applyColor, props.interval);
+      let lastStamp = Date.now();
 
-      const changeColor = debounce(async function () {
+      const changeColor = async function () {
         const index = 1 + (Math.floor(Math.random() * 100) % colors.length) - 1;
         const color = colors[index];
         const colorString = [color.angle, 100, 100].join(",");
@@ -102,12 +114,25 @@
         main.style.backgroundColor = color.rgb;
         theme.content = color.rgb;
 
-        apply(colorString, color.name);
-      }, 200);
+        speak(color.name);
+        apply(colorString);
+      };
 
-      main.onclick = changeColor;
-      main.ontouchend = changeColor;
-      
+      function startChange() {
+        lastStamp = Date.now();
+      }
+
+      function stopChange() {
+        if (Date.now() - lastStamp > props.resetTimeout) {
+          main.style.backgroundColor = theme.content = "#ffffff";
+          return reset();
+        }
+
+        apply();
+      }
+
+      main.onmousedown = main.ontouchstart = startChange;
+      main.onmouseup = main.ontouchend = stopChange;
     });
   </script>
   <style>

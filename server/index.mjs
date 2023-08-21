@@ -22,24 +22,58 @@ async function changeColor(deviceId, color, credentials) {
   return response.ok;
 }
 
+async function resetColor(deviceId, credentials) {
+  const { clientId, clientSecret } = credentials;
+  const url = `https://tuya-connector.jsfn.run/workMode?deviceId=${deviceId}&clientId=${clientId}&clientSecret=${clientSecret}&value=white`;
+  const payload = { ...cors };
+
+  console.log(url, payload);
+  const response = await fetch(url, payload);
+
+  return response.ok;
+}
+
+function getCredentials(req) {
+  const { clientid, clientsecret } = req.headers;
+  const credentials = {
+    clientId: clientid,
+    clientSecret: clientsecret,
+  };
+
+  return credentials;
+}
+
+function onTap(req, credentials) {
+  const [deviceId, colorString] = req.url.replace("/tap/", "").split("/");
+  const [h, s, v] = colorString.split(",");
+  const color = { h, s, v };
+
+  return changeColor(deviceId, color, credentials);
+}
+
+function onReset(req, credentials) {
+  const deviceId = req.url.replace("/reset/", "");
+  return resetColor(deviceId, credentials);
+}
+
+async function handle(req, res, fn) {
+  try {
+    const credentials = getCredentials(req);
+    const result = await fn(req, credentials);
+    res.end(String(result));
+  } catch (error) {
+    console.log(error);
+    res.writeHead(500).end();
+  }
+}
+
 export default async function (req, res, next) {
   if (req.url.startsWith("/tap/")) {
-    const [deviceId, colorString] = req.url.replace("/tap/", "").split("/");
-    const [h, s, v] = colorString.split(",");
-    const color = { h, s, v };
+    handle(req, res, onTap);
+  }
 
-    try {
-      const { clientid, clientsecret } = req.headers;
-      const credentials = {
-        clientId: clientid,
-        clientSecret: clientsecret,
-      };
-
-      res.end(String(await changeColor(deviceId, color, credentials)));
-    } catch (error) {
-      console.log(error);
-      res.writeHead(500).end();
-    }
+  if (req.url.startsWith("/reset/")) {
+    handle(req, res, onReset);
   }
 
   next();
