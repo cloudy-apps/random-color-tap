@@ -23,45 +23,11 @@
     } from "https://auth.homebots.io/auth.js";
 
     const colors = [
-      "#F44336",
-      "#E91E63",
-      "#9C27B0",
-      "#673AB7",
-      "#3F51B5",
-      "#2196F3",
-      "#03A9F4",
-      "#00BCD4",
-      "#009688",
-      "#4CAF50",
-      "#8BC34A",
-      "#CDDC39",
-      "#FFEB3B",
-      "#FFC107",
-      "#FF9800",
-      "#FF5722",
-      "#795548",
-      "#9E9E9E",
-    ];
-
-    const hsvColors = [
-      { h: 4, s: 89, v: 96 }, // #F44336
-      { h: 340, s: 82, v: 92 }, // #E91E63
-      { h: 288, s: 64, v: 69 }, // #9C27B0
-      { h: 262, s: 52, v: 72 }, // #673AB7
-      { h: 232, s: 57, v: 71 }, // #3F51B5
-      { h: 207, s: 87, v: 95 }, // #2196F3
-      { h: 199, s: 98, v: 96 }, // #03A9F4
-      { h: 187, s: 100, v: 83 }, // #00BCD4
-      { h: 174, s: 100, v: 60 }, // #009688
-      { h: 122, s: 39, v: 80 }, // #4CAF50
-      { h: 76, s: 76, v: 70 }, // #8BC34A
-      { h: 66, s: 79, v: 80 }, // #CDDC39
-      { h: 54, s: 100, v: 100 }, // #FFEB3B
-      { h: 45, s: 100, v: 100 }, // #FFC107
-      { h: 36, s: 100, v: 100 }, // #FF9800
-      { h: 14, s: 100, v: 100 }, // #FF5722
-      { h: 16, s: 32, v: 60 }, // #795548
-      { h: 0, s: 0, v: 62 }, // #9E9E9E
+      { rgb: "#ff0000", angle: 0, name: "red" },
+      { rgb: "#ffff00", angle: 60, name: "yellow" },
+      { rgb: "#00ff00", angle: 0, name: "green" },
+      { rgb: "#00ffff", angle: 0, name: "cyan" },
+      { rgb: "#0000ff", angle: 0, name: "blue" },
     ];
 
     let properties;
@@ -71,11 +37,13 @@
         const clientId = await getProperty("rct:clientId");
         const clientSecret = await getProperty("rct:clientSecret");
         const deviceIds = await getProperty("rct:deviceIds");
+        const interval = await getProperty("rct:interval");
 
         properties = {
           clientId: clientId.value,
           clientSecret: clientSecret.value,
           deviceIds: deviceIds.value.split(",").map((s) => s.trim()),
+          deviceIds: Number(interval.value) || 1000,
         };
       }
 
@@ -94,42 +62,51 @@
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    const applyColors = debounce(async (colorString) => {
+    function speak(text) {
+      if (window.speechSynthesis) {
+        speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+      }
+    }
+
+    const applyColors = async (colorString, name) => {
       const { clientId, clientSecret, deviceIds } = await getProperties();
+      speak(name);
 
       for (const deviceId of deviceIds) {
         await fetch("/tap/" + deviceId + "/" + colorString, {
           headers: { clientId, clientSecret },
         });
+
         await delay(200);
       }
-    });
+    };
 
     window.addEventListener("DOMContentLoaded", async () => {
       const main = document.querySelector("main");
       const theme = document.head.querySelector('meta[name="theme-color"]');
-
-      const changeColor = debounce(async function () {
-        const index =
-          1 + (Math.floor(Math.random() * 1000) % colors.length) - 1;
-        const color = colors[index];
-        const hsvColor = hsvColors[index];
-        const colorString = [hsvColor.h, hsvColor.s, hsvColor.v].join(",");
-
-        main.style.backgroundColor = color;
-        theme.content = color;
-
-        applyColors(colorString);
-      }, 200);
-
-      main.onclick = changeColor;
-      main.ontouchend = changeColor;
 
       try {
         await getProfile();
       } catch {
         signIn();
       }
+
+      const props = await getProperties();
+      const apply = debounce(applyColors, props.interval);
+
+      const changeColor = debounce(async function () {
+        const index = 1 + (Math.floor(Math.random() * 100) % colors.length) - 1;
+        const color = colors[index];
+        const colorString = [color.angle, 100, 100].join(",");
+
+        main.style.backgroundColor = color.rgb;
+        theme.content = color.rgb;
+
+        apply(colorString, color.name);
+      }, 200);
+
+      main.onclick = changeColor;
+      main.ontouchend = changeColor;
     });
   </script>
   <style>
