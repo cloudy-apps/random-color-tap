@@ -69,11 +69,11 @@ async function handle(req, res, fn) {
 
 export default async function (req, res, next) {
   if (req.url.startsWith("/tap/")) {
-    handle(req, res, onTap);
+    return handle(req, res, onTap);
   }
 
   if (req.url.startsWith("/reset/")) {
-    handle(req, res, onReset);
+    return handle(req, res, onReset);
   }
 
   next();

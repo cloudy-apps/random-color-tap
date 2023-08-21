@@ -70,7 +70,10 @@
       }
     }
 
-    const applyColor = async (colorString) => {
+    const applyColor = async (color) => {
+      speak(color.name);
+
+      const colorString = [color.angle, 100, 100].join(",");
       const { clientId, clientSecret, deviceIds } = await getProperties();
 
       for (const deviceId of deviceIds) {
@@ -86,7 +89,7 @@
       const { clientId, clientSecret, deviceIds } = await getProperties();
 
       for (const deviceId of deviceIds) {
-        await fetch("/reset/" + deviceIds, {
+        await fetch("/reset/" + deviceId, {
           headers: { clientId, clientSecret },
         });
       }
@@ -109,13 +112,11 @@
       const changeColor = async function () {
         const index = 1 + (Math.floor(Math.random() * 100) % colors.length) - 1;
         const color = colors[index];
-        const colorString = [color.angle, 100, 100].join(",");
 
         main.style.backgroundColor = color.rgb;
         theme.content = color.rgb;
 
-        speak(color.name);
-        apply(colorString);
+        apply(color);
       };
 
       function startChange() {
