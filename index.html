@@ -120,15 +120,20 @@
 
       function startChange() {
         lastStamp = Date.now();
+        console.log(lastStamp);
       }
 
       function stopChange() {
-        if (Date.now() - lastStamp > props.resetTimeout) {
+        const elapsed = Date.now() - lastStamp;
+        console.log(lastStamp, elapsed, props.resetTimeout);
+
+        if (elapsed > props.resetTimeout) {
           main.style.backgroundColor = theme.content = "#ffffff";
-          return reset();
+          reset();
+          return;
         }
 
-        apply();
+        changeColor();
       }
 
       main.onmousedown = main.ontouchstart = startChange;
