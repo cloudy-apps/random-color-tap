@@ -43,7 +43,7 @@
         const deviceIds = await getProperty("rct:deviceIds");
         const interval = await getProperty("rct:interval");
         const resetTimeout = await getProperty("rct:resetTimeout");
-        const state = new State(stateId.value);
+        const state = new State(stateId);
 
         await state.init();
 
@@ -52,11 +52,11 @@
         }
 
         properties = {
-          clientId: clientId.value,
-          clientSecret: clientSecret.value,
-          deviceIds: deviceIds.value.split(",").map((s) => s.trim()),
-          interval: Number(interval.value) || 1000,
-          resetTimeout: Number(resetTimeout.value) || 3000,
+          clientId,
+          clientSecret,
+          deviceIds: deviceIds.split(",").map((s) => s.trim()),
+          interval: Number(interval) || 1000,
+          resetTimeout: Number(resetTimeout) || 3000,
           state,
         };
       }
