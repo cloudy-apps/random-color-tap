@@ -16,11 +16,14 @@
     <main id="app" class="w-screen h-screen"></main>
   </body>
   <script type="module">
+    import { State } from 'https://s.homebots.io/state.mjs';
     import {
       getProperty,
+      setProperty,
       getProfile,
       signIn,
     } from "https://auth.homebots.io/auth.js";
+
 
     const colors = [
       { rgb: "#ff0000", angle: 0, name: "red" },
@@ -34,11 +37,19 @@
 
     async function getProperties() {
       if (!properties) {
+        const stateId = await getProperty("rct:stateId");
         const clientId = await getProperty("rct:clientId");
         const clientSecret = await getProperty("rct:clientSecret");
         const deviceIds = await getProperty("rct:deviceIds");
         const interval = await getProperty("rct:interval");
         const resetTimeout = await getProperty("rct:resetTimeout");
+        const state = new State(stateId);
+
+        await state.init();
+
+        if (!stateId) {
+          setProperty('rct:stateId', state.id);
+        }
 
         properties = {
           clientId: clientId.value,
@@ -46,6 +57,7 @@
           deviceIds: deviceIds.value.split(",").map((s) => s.trim()),
           interval: Number(interval.value) || 1000,
           resetTimeout: Number(resetTimeout.value) || 3000,
+          state,
         };
       }
 
@@ -74,7 +86,9 @@
       speak(color.name);
 
       const colorString = [color.angle, 100, 100].join(",");
-      const { clientId, clientSecret, deviceIds } = await getProperties();
+      const { clientId, clientSecret, deviceIds, state } = await getProperties();
+
+      await state.add('color', color);
 
       for (const deviceId of deviceIds) {
         await fetch("/tap/" + deviceId + "/" + colorString, {
@@ -93,6 +107,8 @@
           headers: { clientId, clientSecret },
         });
       }
+
+      await state.remove('color');
     };
 
     window.addEventListener("DOMContentLoaded", async () => {
@@ -108,6 +124,16 @@
       const props = await getProperties();
       const apply = debounce(applyColor, props.interval);
       let lastStamp = Date.now();
+      const { state } = props;
+
+      state.onchange = (e) => {
+        const color = e.detail?.color;
+
+        if (!color) return;
+
+        main.style.backgroundColor = color.rgb;
+        theme.content = color.rgb;
+      };
 
       const changeColor = async function () {
         const index = 1 + (Math.floor(Math.random() * 100) % colors.length) - 1;
@@ -121,12 +147,10 @@
 
       function startChange() {
         lastStamp = Date.now();
-        console.log(lastStamp);
       }
 
       function stopChange() {
         const elapsed = Date.now() - lastStamp;
-        console.log(lastStamp, elapsed, props.resetTimeout);
 
         if (elapsed > props.resetTimeout) {
           main.style.backgroundColor = theme.content = "#ffffff";
