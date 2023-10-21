@@ -99,7 +99,7 @@
     };
 
     const reset = async () => {
-      const { clientId, clientSecret, deviceIds } = await getProperties();
+      const { clientId, clientSecret, deviceIds, state } = await getProperties();
 
       for (const deviceId of deviceIds) {
         await fetch("/reset/" + deviceId, {
