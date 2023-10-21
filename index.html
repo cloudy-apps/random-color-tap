@@ -24,7 +24,6 @@
       signIn,
     } from "https://auth.homebots.io/auth.js";
 
-
     const colors = [
       { rgb: "#ff0000", angle: 0, name: "red" },
       { rgb: "#ffff00", angle: 60, name: "yellow" },
@@ -115,6 +114,13 @@
       const main = document.querySelector("main");
       const theme = document.head.querySelector('meta[name="theme-color"]');
 
+      const applyColorToScreen = (color) => {
+        if (color) {
+          main.style.backgroundColor = color.rgb;
+          theme.content = color.rgb;
+        }
+      };
+
       try {
         await getProfile();
       } catch {
@@ -126,22 +132,14 @@
       let lastStamp = Date.now();
       const { state } = props;
 
-      state.onchange = (e) => {
-        const color = e.detail?.color;
-
-        if (!color) return;
-
-        main.style.backgroundColor = color.rgb;
-        theme.content = color.rgb;
-      };
+      state.onchange = () => applyColorToScreen(state.current?.color);
+      applyColorToScreen(state.current?.color);
 
       const changeColor = async function () {
         const index = 1 + (Math.floor(Math.random() * 100) % colors.length) - 1;
         const color = colors[index];
 
-        main.style.backgroundColor = color.rgb;
-        theme.content = color.rgb;
-
+        applyColorToScreen(color);
         apply(color);
       };
 
