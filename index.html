@@ -101,13 +101,13 @@
     const reset = async () => {
       const { clientId, clientSecret, deviceIds, state } = await getProperties();
 
+      await state.remove('color');
+
       for (const deviceId of deviceIds) {
         await fetch("/reset/" + deviceId, {
           headers: { clientId, clientSecret },
         });
       }
-
-      await state.remove('color');
     };
 
     window.addEventListener("DOMContentLoaded", async () => {
@@ -115,10 +115,9 @@
       const theme = document.head.querySelector('meta[name="theme-color"]');
 
       const applyColorToScreen = (color) => {
-        if (color) {
-          main.style.backgroundColor = color.rgb;
-          theme.content = color.rgb;
-        }
+        const rgb = color?.rgb || '#fff';
+        main.style.backgroundColor = rgb;
+        theme.content = rgb;
       };
 
       try {
@@ -128,7 +127,7 @@
       }
 
       const props = await getProperties();
-      const apply = debounce(applyColor, props.interval);
+      const applyColorToDevices = debounce(applyColor, props.interval);
       let lastStamp = Date.now();
       const { state } = props;
 
@@ -140,7 +139,7 @@
         const color = colors[index];
 
         applyColorToScreen(color);
-        apply(color);
+        applyColorToDevices(color);
       };
 
       function startChange() {
