@@ -43,7 +43,7 @@
         const deviceIds = await getProperty("rct:deviceIds");
         const interval = await getProperty("rct:interval");
         const resetTimeout = await getProperty("rct:resetTimeout");
-        const state = new State(stateId);
+        const state = new State(stateId.value);
 
         await state.init();
 
