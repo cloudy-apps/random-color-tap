@@ -113,7 +113,6 @@
     window.addEventListener("DOMContentLoaded", async () => {
       const main = document.querySelector("main");
       const theme = document.head.querySelector('meta[name="theme-color"]');
-
       const applyColorToScreen = (color) => {
         const rgb = color?.rgb || '#fff';
         main.style.backgroundColor = rgb;
@@ -124,6 +123,7 @@
         await getProfile();
       } catch {
         signIn();
+        return;
       }
 
       const props = await getProperties();
@@ -157,7 +157,7 @@
 
           await changeColor();
         } catch (e) {
-          document.getElementById('app').innerHTML += String(e);
+          document.getElementById('app').innerHTML = String(e);
         }
       }
 
