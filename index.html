@@ -146,16 +146,19 @@
         lastStamp = Date.now();
       }
 
-      function stopChange() {
-        const elapsed = Date.now() - lastStamp;
+      async function stopChange() {
+        try {
+          const elapsed = Date.now() - lastStamp;
 
-        if (elapsed > props.resetTimeout) {
-          main.style.backgroundColor = theme.content = "#ffffff";
-          reset();
-          return;
+          if (elapsed > props.resetTimeout) {
+            main.style.backgroundColor = theme.content = "#ffffff";
+            return await reset();
+          }
+
+          await changeColor();
+        } catch (e) {
+          document.getElementById('app').innerHTML += String(e);
         }
-
-        changeColor();
       }
 
       main.onmousedown = main.ontouchstart = startChange;
