@@ -128,7 +128,6 @@
         const rgb = color?.rgb || '#fff';
         main.style.backgroundColor = rgb;
         theme.content = rgb;
-        console.log(rgb);
       };
 
       try {
@@ -170,6 +169,7 @@
           }
 
           await changeColor();
+          console.log('')
         } catch (e) {
           console.log(e);
         }
