@@ -13,14 +13,14 @@
     />
   </head>
   <body>
-    <main id="app" class="w-screen h-screen">Loaading</main>
+    <main id="app" class="w-screen h-screen"></main>
     <script>
       window._a = [];
       console.log = (...args) => _a.push(args);
       window.addEventListener("DOMContentLoaded", () => {
         const c = document.getElementById('app');
 
-        console.log = (...args) => c.innerHTML += args.map(String).join(' ');
+        console.log = (...args) => c.innerHTML = args.map(String).join(' ');
         _a.forEach(a => console.log(...a));
       });
     </script>
@@ -128,12 +128,14 @@
         const rgb = color?.rgb || '#fff';
         main.style.backgroundColor = rgb;
         theme.content = rgb;
+        console.log(rgb);
       };
 
       try {
+        console.log('auth');
         await getProfile();
       } catch {
-        console.log('auth');
+        console.log('redirecting');
         signIn();
         return;
       }
