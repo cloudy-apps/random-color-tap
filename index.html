@@ -13,9 +13,20 @@
     />
   </head>
   <body>
-    <main id="app" class="w-screen h-screen"></main>
+    <main id="app" class="w-screen h-screen">Loaading</main>
+    <script>
+      window._a = [];
+      console.log = (...args) => _a.push(args);
+      window.addEventListener("DOMContentLoaded", () => {
+        const c = document.getElementById('app');
+
+        console.log = (...args) => c.innerHTML += args.map(String).join(' ');
+        _a.forEach(a => console.log(...a));
+      });
+    </script>
   </body>
-  <script type="module">
+
+  <script type="module" onerror="console.log(...arguments)">
     import { State } from 'https://s.homebots.io/state.mjs';
     import {
       getProperty,
@@ -81,7 +92,7 @@
       }
     }
 
-    const applyColor = async (color) => {
+    async function applyColor(color) {
       speak(color.name);
 
       const colorString = [color.angle, 100, 100].join(",");
@@ -96,9 +107,9 @@
 
         await delay(200);
       }
-    };
+    }
 
-    const reset = async () => {
+    async function reset() {
       const { clientId, clientSecret, deviceIds, state } = await getProperties();
 
       await state.remove('color');
@@ -108,7 +119,7 @@
           headers: { clientId, clientSecret },
         });
       }
-    };
+    }
 
     window.addEventListener("DOMContentLoaded", async () => {
       const main = document.querySelector("main");
@@ -122,6 +133,7 @@
       try {
         await getProfile();
       } catch {
+        console.log('auth');
         signIn();
         return;
       }
@@ -157,7 +169,7 @@
 
           await changeColor();
         } catch (e) {
-          document.getElementById('app').innerHTML = String(e);
+          console.log(e);
         }
       }
 
